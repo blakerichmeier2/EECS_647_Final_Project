@@ -94,7 +94,7 @@
     
     echo '<br>';
     echo "<table border='1'>";
-    echo "<tr><th>ClassCode</th><th>Professor</th><th>Room Number</th><th>Building Number</th><th>Credit Hours</th><th>Seats Availiable</th><th>Time</th></tr>";
+    echo "<tr><th>ClassCode</th><th>Professor</th><th>Instruction Mode</th><th>Building Name</th><th>Building Number</th><th>Credit Hours</th><th>Seats Available</th><th>Time</th></tr>";
     while($row = mysqli_fetch_array($result)){
       echo "<tr><td>" . $row['ClassCode'] ."</td><td>". $row['name'] . "</td><td>" . $row['Mode']. "</td><td>" . $row['BuildingName'] . "</td><td>" . $row['RoomNumber'] . "</td><td>" . $row['CreditHours'] . "</td><td>" . $row['SeatsAvailable'] . "</td><td>" . $row['Time'] . "</td></tr>";
      }
