@@ -26,6 +26,7 @@
               </div>
           <div class = "col">
           <select class="form-select form-select-md mb-3" name="class_term" id = "class_term" aria-label=".form-select-lg example">
+              <option vlaue="Any">Any</option>
               <option value="Spring 2022">Spring 2022</option>
               <option value="Fall 2022">Fall 2022</option>
               <option value="Spring 2023">Spring 2023</option>
@@ -58,35 +59,61 @@
     $class_type = $_POST["class_type"];
     $class_term = $_POST["class_term"];
     $class_instruction_type = $_POST["class_instruction_type"];
-    echo "<h3>";
-    echo "<br>Searching For: <br>";
-    echo "<br>Class Code: " . $class_code . "<br>";
-    echo "Class Type: " . $class_type . "<br>";
-    echo "Class Code: " . $class_term . "<br>";
-    echo "Class Type: " . $class_instruction_type . "<br> </h3>";
 
     $mysqli = new mysqli("mysql.eecs.ku.edu", "p162g473", "ahH3hohi", "p162g473");
 
     if($mysqli->connect_error){
       die("Connection failed: " . $mysqli->connect_error);
     }
-    if($class_code == "" && $class_instruction_type == "Any Instruction Mode"){
-      $query = "SELECT ClassCode, PROFESSOR.name, BuildingName, RoomNumber, CreditHours, SeatsAvailable, Time, Mode FROM CLASS, TEACHES, PROFESSOR WHERE CLASS.ClassNumber = TEACHES.ClassNumber
+    if($class_code == "" && $class_term == "Any" && $class_instruction_type == "Any Instruction Mode"){
+      $query = "SELECT ClassCode, PROFESSOR.name, BuildingName, RoomNumber, CreditHours, SeatsAvailable, Time, Mode, ClassTerm FROM CLASS, TEACHES, PROFESSOR 
+                WHERE CLASS.ClassNumber = TEACHES.ClassNumber
                 AND PROFESSOR.PID = TEACHES.PID";
     }
-    else if($class_code != "" && $class_instruction_type == "Any Instruction Mode"){
-      $query = "SELECT ClassCode, PROFESSOR.name, BuildingName, RoomNumber, CreditHours, SeatsAvailable, Time, Mode FROM CLASS, TEACHES, PROFESSOR WHERE ClassCode LIKE '%$class_code%'
+    else if($class_code != "" && $class_term == "Any" && $class_instruction_type == "Any Instruction Mode"){
+      $query = "SELECT ClassCode, PROFESSOR.name, BuildingName, RoomNumber, CreditHours, SeatsAvailable, Time, Mode, ClassTerm FROM CLASS, TEACHES, PROFESSOR 
+                WHERE ClassCode LIKE '%$class_code%'
                 AND CLASS.ClassNumber = TEACHES.ClassNumber
                 AND PROFESSOR.PID = TEACHES.PID";
     }
-    else if($class_code == "" && $class_instruction_type != "Any Instruction Mode"){
-      $query = "SELECT ClassCode, PROFESSOR.name, BuildingName, RoomNumber, CreditHours, SeatsAvailable, Time, Mode FROM CLASS, TEACHES, PROFESSOR WHERE CLASS.Mode='$class_instruction_type'
+    else if($class_code == "" && $class_term == "Any" && $class_instruction_type != "Any Instruction Mode"){
+      $query = "SELECT ClassCode, PROFESSOR.name, BuildingName, RoomNumber, CreditHours, SeatsAvailable, Time, Mode, ClassTerm FROM CLASS, TEACHES, PROFESSOR 
+                WHERE CLASS.Mode='$class_instruction_type'
+                AND CLASS.ClassNumber = TEACHES.ClassNumber
+                AND PROFESSOR.PID = TEACHES.PID";
+    }
+    else if($class_code != "" && $class_term == "Any" && $class_instruction_type != "Any Instruction Mode"){
+      $query = "SELECT ClassCode, PROFESSOR.name, BuildingName, RoomNumber, CreditHours, SeatsAvailable, Time, Mode, ClassTerm FROM CLASS, TEACHES, PROFESSOR 
+                WHERE CLASS.Mode='$class_instruction_type'
+                AND ClassCode LIKE '%$class_code%'
+                AND CLASS.ClassNumber = TEACHES.ClassNumber
+                AND PROFESSOR.PID = TEACHES.PID";
+    }
+    else if($class_code != "" && $class_term != "Any" && $class_instruction_type == "Any Instruction Mode"){
+      $query = "SELECT ClassCode, PROFESSOR.name, BuildingName, RoomNumber, CreditHours, SeatsAvailable, Time, Mode, ClassTerm FROM CLASS, TEACHES, PROFESSOR 
+                WHERE ClassCode LIKE '%$class_code%'
+                AND ClassTerm='$class_term'
+                AND CLASS.ClassNumber = TEACHES.ClassNumber
+                AND PROFESSOR.PID = TEACHES.PID";
+    }
+    else if($class_code == "" && $class_term != "Any" && $class_instruction_type != "Any Instruction Mode"){
+      $query = "SELECT ClassCode, PROFESSOR.name, BuildingName, RoomNumber, CreditHours, SeatsAvailable, Time, Mode, ClassTerm FROM CLASS, TEACHES, PROFESSOR 
+                WHERE CLASS.Mode='$class_instruction_type'
+                AND ClassTerm='$class_term'
+                AND CLASS.ClassNumber = TEACHES.ClassNumber
+                AND PROFESSOR.PID = TEACHES.PID";
+    }
+    else if($class_code == "" && $class_term != "Any" && $class_instruction_type == "Any Instruction Mode"){
+      $query = "SELECT ClassCode, PROFESSOR.name, BuildingName, RoomNumber, CreditHours, SeatsAvailable, Time, Mode, ClassTerm FROM CLASS, TEACHES, PROFESSOR 
+                WHERE ClassTerm='$class_term'
                 AND CLASS.ClassNumber = TEACHES.ClassNumber
                 AND PROFESSOR.PID = TEACHES.PID";
     }
     else{
-      $query = "SELECT ClassCode, PROFESSOR.name, BuildingName, RoomNumber, CreditHours, SeatsAvailable, Time, Mode FROM CLASS, TEACHES, PROFESSOR WHERE CLASS.Mode='$class_instruction_type'
+      $query = "SELECT ClassCode, PROFESSOR.name, BuildingName, RoomNumber, CreditHours, SeatsAvailable, Time, Mode, ClassTerm FROM CLASS, TEACHES, PROFESSOR 
+                WHERE CLASS.Mode='$class_instruction_type'
                 AND ClassCode LIKE '%$class_code%'
+                AND ClassTerm='$class_term'
                 AND CLASS.ClassNumber = TEACHES.ClassNumber
                 AND PROFESSOR.PID = TEACHES.PID";
     }
@@ -94,9 +121,9 @@
     
     echo '<br>';
     echo "<table border='1'>";
-    echo "<tr><th>ClassCode</th><th>Professor</th><th>Instruction Mode</th><th>Building Name</th><th>Building Number</th><th>Credit Hours</th><th>Seats Available</th><th>Time</th></tr>";
+    echo "<tr><th>Class Name</th><th>Professor</th><th>Instruction Mode</th><th>Building Name</th><th>Building Number</th><th>Credit Hours</th><th>Seats Available</th><th>Time</th><th>Term</th></tr>";
     while($row = mysqli_fetch_array($result)){
-      echo "<tr><td>" . $row['ClassCode'] ."</td><td>". $row['name'] . "</td><td>" . $row['Mode']. "</td><td>" . $row['BuildingName'] . "</td><td>" . $row['RoomNumber'] . "</td><td>" . $row['CreditHours'] . "</td><td>" . $row['SeatsAvailable'] . "</td><td>" . $row['Time'] . "</td></tr>";
+      echo "<tr><td>" . $row['ClassCode'] ."</td><td>". $row['name'] . "</td><td>" . $row['Mode']. "</td><td>" . $row['BuildingName'] . "</td><td>" . $row['RoomNumber'] . "</td><td>" . $row['CreditHours'] . "</td><td>" . $row['SeatsAvailable'] . "</td><td>" . $row['Time'] . "</td><td>" . $row['ClassTerm'] . "</td></tr>";
      }
     echo "</table>";
     $mysqli->close();
