@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang = "en">
 <head>
+<br>
     <img src="images/jayhawk.png" class="rounded float-start offset-1" height=50 width=50>
-    <h1 class="header offset-1">Office of the University Registrar</h1>
+    <h1 class="header offset-1">&nbsp;Office of the University Registrar</h1>
     <link href="style.css" rel="stylesheet" type="text/css"/>
+    <br>
+    <h4 class="header offset-1">&nbsp; &nbsp; Schedule of Classes:</h4>
     <meta charset="UTF-8">
     <meta name="viewport" width="device-width" initial-scale="1.0">
     <title>647 Final Project Prototype</title>
@@ -94,7 +97,7 @@
     
     echo '<br>';
     echo "<table border='1'>";
-    echo "<tr><th>ClassCode</th><th>Professor</th><th>Instruction Mode</th><th>Building Name</th><th>Building Number</th><th>Credit Hours</th><th>Seats Available</th><th>Time</th></tr>";
+    echo "<tr><th>Class Code</th><th>Professor</th><th>Instruction Mode</th><th>Building Name</th><th>Building Number</th><th>Credit Hours</th><th>Seats Available</th><th>Time</th></tr>";
     while($row = mysqli_fetch_array($result)){
       echo "<tr><td>" . $row['ClassCode'] ."</td><td>". $row['name'] . "</td><td>" . $row['Mode']. "</td><td>" . $row['BuildingName'] . "</td><td>" . $row['RoomNumber'] . "</td><td>" . $row['CreditHours'] . "</td><td>" . $row['SeatsAvailable'] . "</td><td>" . $row['Time'] . "</td></tr>";
      }
